@@ -25,9 +25,4 @@ for zim_file in "${zim_files[@]}"; do
   args+=("/data/${zim_file}")
 done
 
-docker run --rm \
-  -v "${data_dir}:/data" \
-  ghcr.io/kiwix/kiwix-tools:latest \
-  kiwix-manage "${args[@]}"
-
 echo "Updated ${library_file} with ${#zim_files[@]} ZIM file(s)."

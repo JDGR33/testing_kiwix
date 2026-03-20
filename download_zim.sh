@@ -8,6 +8,12 @@ links_file="${2:-${script_dir}/zim_links.txt}"
 
 mkdir -p "$target_dir"
 
+if [[ ! -w "$target_dir" ]]; then
+  echo "Target directory is not writable: $target_dir" >&2
+  echo "Fix with: sudo chown -R \"$(id -un)\":\"$(id -gn)\" \"$target_dir\"" >&2
+  exit 1
+fi
+
 if [[ ! -f "$links_file" ]]; then
   echo "Links file not found: $links_file" >&2
   exit 1
@@ -38,9 +44,13 @@ while IFS= read -r raw_line || [[ -n "$raw_line" ]]; do
   # Ignore comments and empty lines.
   line="${raw_line#${raw_line%%[![:space:]]*}}"
   line="${line%${line##*[![:space:]]}}"
+  line="${line//$'\r'/}"
+  line="${line//$'\n'/}"
   [[ -z "$line" || "${line:0:1}" == "#" ]] && continue
 
   file_name="$(basename "${line%%\?*}")"
+  file_name="${file_name//$'\r'/}"
+  file_name="${file_name//$'\n'/}"
   if [[ -z "$file_name" || "$file_name" == "/" ]]; then
     echo "Skipping invalid URL: $line" >&2
     continue
