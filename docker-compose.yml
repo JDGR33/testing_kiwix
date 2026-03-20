@@ -1,0 +1,13 @@
+services:
+  kiwix:
+    image: ghcr.io/kiwix/kiwix-serve:latest
+    container_name: kiwix-server
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/data:ro
+    command:
+      - --monitorLibrary
+      - --library
+      - /data/library.xml
+    restart: "no"
